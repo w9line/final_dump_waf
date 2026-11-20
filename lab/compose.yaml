@@ -1,0 +1,103 @@
+services:
+  router:
+    build:
+      context: ..
+      dockerfile: lab/Dockerfile
+    container_name: aegis-lab-router
+    command: ["sleep", "infinity"]
+    cap_add: [NET_ADMIN, NET_RAW]
+    networks: [aegis-lab]
+    healthcheck:
+      test: ["CMD", "ss", "-H", "-ltn"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+
+  flask:
+    image: aegis-lab:latest
+    build:
+      context: ..
+      dockerfile: lab/Dockerfile
+    network_mode: "service:router"
+    depends_on: [router]
+    command: ["python", "/workspace/lab/apps/flask_app.py"]
+    volumes: ["..:/workspace:ro"]
+
+  fastapi:
+    image: aegis-lab:latest
+    network_mode: "service:router"
+    depends_on: [router]
+    command: ["uvicorn", "lab.apps.fastapi_app:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
+    volumes: ["..:/workspace:ro"]
+
+  nginx:
+    image: aegis-lab:latest
+    network_mode: "service:router"
+    depends_on: [router]
+    command: ["nginx", "-g", "daemon off;"]
+
+  ssh:
+    image: aegis-lab:latest
+    network_mode: "service:router"
+    depends_on: [router]
+    command: ["/bin/sh", "/workspace/lab/ssh.sh"]
+    volumes: ["..:/workspace:ro"]
+
+  https:
+    image: aegis-lab:latest
+    network_mode: "service:router"
+    depends_on: [router]
+    command: ["python", "/workspace/lab/apps/https_app.py"]
+    volumes: ["..:/workspace:ro"]
+
+  aegis:
+    image: aegis-lab:latest
+    network_mode: "service:router"
+    depends_on: [router, flask, fastapi, nginx, ssh, https]
+    cap_add: [NET_ADMIN, NET_RAW]
+    command: ["python", "/workspace/lab/service_entrypoint.py", "--config", "/workspace/lab/config.yaml"]
+    environment: ["PYTHONPATH=/app:/workspace"]
+    volumes:
+      - "..:/workspace:ro"
+      - aegis-state:/run/aegis
+      - aegis-data:/var/lib/aegis
+    restart: on-failure
+
+  watchdog:
+    image: aegis-lab:latest
+    network_mode: "service:router"
+    pid: "service:aegis"
+    depends_on: [aegis]
+    cap_add: [NET_ADMIN, KILL]
+    command: ["python", "-m", "aegis.watchdog", "--config", "/workspace/lab/config.yaml"]
+    volumes:
+      - "..:/workspace:ro"
+      - aegis-state:/run/aegis
+      - aegis-data:/var/lib/aegis
+    restart: unless-stopped
+
+  client:
+    image: aegis-lab:latest
+    container_name: aegis-lab-client
+    command: ["sleep", "infinity"]
+    depends_on: [router]
+    networks: [aegis-lab]
+    volumes: ["..:/workspace:ro"]
+
+  dynamic:
+    image: aegis-lab:latest
+    profiles: [dynamic]
+    network_mode: "service:router"
+    depends_on: [router]
+    command: ["python", "/workspace/lab/apps/dynamic_app.py"]
+    volumes: ["..:/workspace:ro"]
+
+networks:
+  aegis-lab:
+    name: aegis-lab
+
+volumes:
+  aegis-state:
+    name: aegis-lab-state
+  aegis-data:
+    name: aegis-lab-data

@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+*.onnx
+*.safetensors
+*.bin
+*.pt
+*.pth
+HF_HOME/

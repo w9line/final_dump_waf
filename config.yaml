@@ -1,0 +1,34 @@
+mode: observe
+block_categories:
+  - 242 - Code Injection
+  - 88 - OS Command Injection
+  - 126 - Path Traversal
+  - 66 - SQL Injection
+  - 16 - Dictionary-based Password Attack
+  - 153 - Input Data Manipulation
+  - 274 - HTTP Verb Tampering
+  - 194 - Fake the Source of Data
+  - 34 - HTTP Response Splitting
+  - 33 - HTTP Request Smuggling
+proxy:
+  executable: mitmdump
+  listen_host: 0.0.0.0
+  listen_port: 18081
+  discovery_interval_seconds: 10
+  startup_timeout_seconds: 300
+  health_timeout_seconds: 5
+  health_check_seconds: 1
+  watchdog_timeout_seconds: 6
+  exclude_ports: [22, 443, 2222, 3306, 5432, 6379, 8443, 27017]
+  ss_command: ss
+  docker_command: docker
+  docker_discovery: true
+  nft_command: nft
+  nft_table: aegis
+  nft_chain: prerouting
+  nft_priority: -90
+  heartbeat_file: /run/aegis/proxy.json
+  service_file: /run/aegis/service.json
+  metrics_file: /var/lib/aegis/metrics.json
+  pid_file: /run/aegis/service.pid
+  mitm_confdir: /var/lib/aegis/mitm

@@ -1,0 +1,23 @@
+[Unit]
+Description=Aegis independent fail-open watchdog
+After=network-online.target aegis.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+Environment=AEGIS_CONFIG=/etc/aegis/config.yaml
+ExecStart=/opt/aegis/venv/bin/aegis-watchdog --config /etc/aegis/config.yaml
+Restart=always
+RestartSec=1
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_KILL
+AmbientCapabilities=CAP_NET_ADMIN CAP_KILL
+NoNewPrivileges=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/run/aegis /var/lib/aegis
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

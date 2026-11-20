@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aegis-transparent-waf"
+version = "0.1.0"
+description = "Transparent, fail-open HTTP interception for isolated CTF services"
+requires-python = ">=3.11"
+dependencies = [
+  "mitmproxy>=11,<13",
+  "PyYAML>=6,<7",
+  "torch>=2.4,<2.5",
+  "transformers>=4.44,<4.45",
+  "safetensors>=0.4,<1",
+]
+
+[project.scripts]
+aegis = "aegis.cli:main"
+aegis-service = "aegis.service:main"
+aegis-watchdog = "aegis.watchdog:main"
+
+[tool.setuptools.packages.find]
+include = ["aegis*"]
