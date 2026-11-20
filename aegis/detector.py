@@ -1,9 +1,43 @@
 """Model inference API for the 4thwall multi-label HTTP WAF."""
 from __future__ import annotations
 
+from contextlib import contextmanager
 from time import perf_counter_ns
 from typing import Any, Protocol
 from urllib.parse import urlsplit
+
+import torch
+import transformers.modeling_utils as modeling_utils
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
+
+
+@contextmanager
+def _pytorch_safetensors_metadata():
+    """Supply the missing PyTorch format tag expected by Transformers."""
+    safe_open = modeling_utils.safe_open
+
+    class MetadataFallback:
+        def __init__(self, handle):
+            self.handle = handle
+
+        def __enter__(self):
+            self.handle.__enter__()
+            return self
+
+        def __exit__(self, *args):
+            return self.handle.__exit__(*args)
+
+        def __getattr__(self, name):
+            return getattr(self.handle, name)
+
+        def metadata(self):
+            return self.handle.metadata() or {"format": "pt"}
+
+    modeling_utils.safe_open = lambda *args, **kwargs: MetadataFallback(safe_open(*args, **kwargs))
+    try:
+        yield
+    finally:
+        modeling_utils.safe_open = safe_open
 
 
 class Detector(Protocol):
@@ -11,9 +45,6 @@ class Detector(Protocol):
         """Return label, score, and inference latency for a mitmproxy request."""
         ...
 
-
-import torch
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 MODEL_ID = "viitheone/4thwall-waf-v2.1b"
 MODEL_REVISION = "6fe21b198c4fa49b2b24ff5d5f8fb33d2f333840"
@@ -35,9 +66,10 @@ class ModelDetector:
         self.tokenizer = AutoTokenizer.from_pretrained(
             MODEL_ID, revision=MODEL_REVISION, trust_remote_code=True,
         )
-        self.model = AutoModelForSequenceClassification.from_pretrained(
-            MODEL_ID, revision=MODEL_REVISION, trust_remote_code=True,
-        ).cpu().eval()
+        with _pytorch_safetensors_metadata():
+            self.model = AutoModelForSequenceClassification.from_pretrained(
+                MODEL_ID, revision=MODEL_REVISION, trust_remote_code=True,
+            ).cpu().eval()
         self.block_labels = set(config.get("block_categories", DEFAULT_BLOCK_LABELS))
         self.thresholds = self.model.config.thresholds
         self.labels = self.model.config.id2label
