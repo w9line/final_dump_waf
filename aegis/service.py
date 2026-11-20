@@ -202,6 +202,7 @@ def main() -> None:
     parser.add_argument("--config", default=os.environ.get("AEGIS_CONFIG", DEFAULT_CONFIG))
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    os.environ["AEGIS_CONFIG"] = args.config
     config = load_config(args.config)
     service = Service(config)
     loop = asyncio.new_event_loop()
