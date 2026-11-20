@@ -90,13 +90,13 @@ class ModelDetector:
         with torch.inference_mode():
             probabilities = torch.sigmoid(self.model(**inputs).logits[0]).tolist()
         detections = [
-            {"label": self.labels[str(index)], "score": float(probability)}
+            {"label": self.labels[index], "score": float(probability)}
             for index, probability in enumerate(probabilities)
-            if index and probability >= float(self.thresholds[self.labels[str(index)]])
+            if index and probability >= float(self.thresholds[self.labels[index]])
         ]
         primary = max(detections, key=lambda item: item["score"], default=None)
         return {
-            "label": primary["label"] if primary else self.labels["0"],
+            "label": primary["label"] if primary else self.labels[0],
             "score": primary["score"] if primary else float(probabilities[0]),
             "detections": detections,
             "blocked": any(item["label"] in self.block_labels for item in detections),
