@@ -68,6 +68,7 @@ if [[ ! -s "${ROOT}/models/4thwall/model.safetensors" ]]; then
 fi
 install -d -m 0755 /opt/aegis /etc/aegis /var/lib/aegis /run/aegis
 cp -a "${ROOT}/." /opt/aegis/
+rm -rf /opt/aegis/venv
 "${PYTHON}" -m venv /opt/aegis/venv
 PIP=/opt/aegis/venv/bin/pip
 if ! "${PIP}" install --retries 3 --timeout 30 --upgrade pip; then
