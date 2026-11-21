@@ -4,11 +4,11 @@ Aegis discovers externally bound TCP listeners, probes for plaintext HTTP, and r
 
 ## Requirements
 
-- Ubuntu 22.04 or 24.04, Python 3.11+, systemd, nftables, and `ss` from iproute2.
+- Ubuntu 22.04 or 24.04, Python 3.11–3.12, systemd, nftables, and `ss` from iproute2.
 - Root privileges / `CAP_NET_ADMIN` for nftables and mitmproxy transparent mode.
 - Optional Docker CLI and access to the Docker daemon for published-port/DNAT discovery.
 
-`install.sh` installs Python 3.11 from the deadsnakes PPA on Ubuntu 22.04 when the system Python is older than 3.11. Review that repository choice in the installer before deploying to a controlled host.
+`install.sh` selects Python 3.12 or 3.11 (Torch 2.4 has no Python 3.13/3.14 wheels), retries apt and pip downloads, retries Git LFS, and falls back from the configured Python index to public PyPI and the official PyTorch CPU wheel index. Review the deadsnakes PPA use before deploying to a controlled host.
 
 ## Install and operate
 
