@@ -46,6 +46,8 @@ class Detector(Protocol):
         ...
 
 
+DEFAULT_MODEL_DIR = "/opt/aegis/models/4thwall"
+
 BLOCK_LABELS = {
     "242 - Code Injection", "88 - OS Command Injection", "126 - Path Traversal",
     "66 - SQL Injection", "16 - Dictionary-based Password Attack",
