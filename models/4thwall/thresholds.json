@@ -1,0 +1,15 @@
+{
+  "000 - Normal": 0.55,
+  "272 - Protocol Manipulation": 0.99,
+  "242 - Code Injection": 0.65,
+  "88 - OS Command Injection": 0.9,
+  "126 - Path Traversal": 0.9,
+  "66 - SQL Injection": 0.7,
+  "16 - Dictionary-based Password Attack": 0.6,
+  "310 - Scanning for Vulnerable Software": 0.55,
+  "153 - Input Data Manipulation": 0.65,
+  "274 - HTTP Verb Tampering": 0.9,
+  "194 - Fake the Source of Data": 0.9,
+  "34 - HTTP Response Splitting": 0.6,
+  "33 - HTTP Request Smuggling": 0.95
+}

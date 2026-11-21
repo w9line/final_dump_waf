@@ -46,8 +46,6 @@ class Detector(Protocol):
         ...
 
 
-MODEL_ID = "viitheone/4thwall-waf-v2.1b"
-MODEL_REVISION = "6fe21b198c4fa49b2b24ff5d5f8fb33d2f333840"
 BLOCK_LABELS = {
     "242 - Code Injection", "88 - OS Command Injection", "126 - Path Traversal",
     "66 - SQL Injection", "16 - Dictionary-based Password Attack",
@@ -63,12 +61,13 @@ class ModelDetector:
     """4thwall multi-label detector with calibrated per-label thresholds."""
 
     def __init__(self, config: dict) -> None:
+        model_dir = config.get("model", {}).get("directory", DEFAULT_MODEL_DIR)
         self.tokenizer = AutoTokenizer.from_pretrained(
-            MODEL_ID, revision=MODEL_REVISION, trust_remote_code=True,
+            model_dir, local_files_only=True, trust_remote_code=True,
         )
         with _pytorch_safetensors_metadata():
             self.model = AutoModelForSequenceClassification.from_pretrained(
-                MODEL_ID, revision=MODEL_REVISION, trust_remote_code=True,
+                model_dir, local_files_only=True, trust_remote_code=True,
             ).cpu().eval()
         self.block_labels = set(config.get("block_categories", DEFAULT_BLOCK_LABELS))
         self.thresholds = self.model.config.thresholds

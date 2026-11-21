@@ -4,6 +4,7 @@ __pycache__/
 .env
 *.onnx
 *.safetensors
+!models/4thwall/model.safetensors
 *.bin
 *.pt
 *.pth

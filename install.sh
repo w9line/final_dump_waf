@@ -8,7 +8,7 @@ if [[ "${EUID}" -ne 0 ]]; then
 fi
 
 apt-get update
-apt-get install -y ca-certificates curl gnupg iproute2 nftables python3-venv python3-pip
+apt-get install -y ca-certificates curl git-lfs gnupg iproute2 nftables python3-venv python3-pip
 PYTHON="$(command -v python3)"
 if ! "${PYTHON}" -c 'import sys; raise SystemExit(sys.version_info < (3, 11))'; then
   apt-get install -y software-properties-common
@@ -18,6 +18,15 @@ if ! "${PYTHON}" -c 'import sys; raise SystemExit(sys.version_info < (3, 11))'; 
   PYTHON="$(command -v python3.11)"
 fi
 
+if [[ ! -e "${ROOT}/.git" ]]; then
+  echo "Install from a GitHub clone so Git LFS can fetch the pinned WAF model weights." >&2
+  exit 1
+fi
+git -C "${ROOT}" lfs pull --include="models/4thwall/model.safetensors"
+if [[ ! -s "${ROOT}/models/4thwall/model.safetensors" ]]; then
+  echo "Missing WAF weights after GitHub LFS download." >&2
+  exit 1
+fi
 install -d -m 0755 /opt/aegis /etc/aegis /var/lib/aegis /run/aegis
 cp -a "${ROOT}/." /opt/aegis/
 "${PYTHON}" -m venv /opt/aegis/venv

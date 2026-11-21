@@ -10,6 +10,8 @@ block_categories:
   - 194 - Fake the Source of Data
   - 34 - HTTP Response Splitting
   - 33 - HTTP Request Smuggling
+model:
+  directory: /workspace/models/4thwall
 proxy:
   executable: mitmdump
   listen_host: 0.0.0.0

@@ -1,0 +1,72 @@
+{
+  "activation": "gelu",
+  "architectures": [
+    "FourthWallForSequenceClassification"
+  ],
+  "attention_dropout": 0.1,
+  "auto_map": {
+    "AutoConfig": "configuration_fourthwall.FourthWallConfig",
+    "AutoModelForSequenceClassification": "modeling_fourthwall.FourthWallForSequenceClassification"
+  },
+  "dim": 768,
+  "dropout": 0.1,
+  "hidden_dim": 3072,
+  "id2label": {
+    "0": "000 - Normal",
+    "1": "272 - Protocol Manipulation",
+    "2": "242 - Code Injection",
+    "3": "88 - OS Command Injection",
+    "4": "126 - Path Traversal",
+    "5": "66 - SQL Injection",
+    "6": "16 - Dictionary-based Password Attack",
+    "7": "310 - Scanning for Vulnerable Software",
+    "8": "153 - Input Data Manipulation",
+    "9": "274 - HTTP Verb Tampering",
+    "10": "194 - Fake the Source of Data",
+    "11": "34 - HTTP Response Splitting",
+    "12": "33 - HTTP Request Smuggling"
+  },
+  "initializer_range": 0.02,
+  "label2id": {
+    "000 - Normal": 0,
+    "126 - Path Traversal": 4,
+    "153 - Input Data Manipulation": 8,
+    "16 - Dictionary-based Password Attack": 6,
+    "194 - Fake the Source of Data": 10,
+    "242 - Code Injection": 2,
+    "272 - Protocol Manipulation": 1,
+    "274 - HTTP Verb Tampering": 9,
+    "310 - Scanning for Vulnerable Software": 7,
+    "33 - HTTP Request Smuggling": 12,
+    "34 - HTTP Response Splitting": 11,
+    "66 - SQL Injection": 5,
+    "88 - OS Command Injection": 3
+  },
+  "max_position_embeddings": 512,
+  "model_type": "fourthwall_waf",
+  "n_heads": 12,
+  "n_layers": 6,
+  "num_labels": 13,
+  "problem_type": "multi_label_classification",
+  "qa_dropout": 0.1,
+  "seq_classif_dropout": 0.3,
+  "sinusoidal_pos_embds": false,
+  "thresholds": {
+    "000 - Normal": 0.55,
+    "272 - Protocol Manipulation": 0.99,
+    "242 - Code Injection": 0.65,
+    "88 - OS Command Injection": 0.9,
+    "126 - Path Traversal": 0.9,
+    "66 - SQL Injection": 0.7,
+    "16 - Dictionary-based Password Attack": 0.6,
+    "310 - Scanning for Vulnerable Software": 0.55,
+    "153 - Input Data Manipulation": 0.65,
+    "274 - HTTP Verb Tampering": 0.9,
+    "194 - Fake the Source of Data": 0.9,
+    "34 - HTTP Response Splitting": 0.6,
+    "33 - HTTP Request Smuggling": 0.95
+  },
+  "torch_dtype": "float32",
+  "transformers_version": "4.30.0",
+  "vocab_size": 30522
+}

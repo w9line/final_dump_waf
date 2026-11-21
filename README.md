@@ -13,6 +13,8 @@ Aegis discovers externally bound TCP listeners, probes for plaintext HTTP, and r
 ## Install and operate
 
 ```sh
+git clone https://github.com/w9line/final_dump_waf.git
+cd final_dump_waf
 sudo ./install.sh
 sudoedit /etc/aegis/config.yaml
 sudo ./start.sh
@@ -58,6 +60,6 @@ Telemetry contains request counts, method/Host counts, destination IP:port count
 - IPv4 only; the implementation relies on mitmproxy's Linux transparent mode and `SO_ORIGINAL_DST`.
 - Only inbound traffic routed through `PREROUTING` is intercepted. Loopback and local client connections bypass it.
 - HTTP identification is an active but bodyless `OPTIONS *` probe. A service must return a syntactically valid HTTP/1.x status line; unknown and non-HTTP listeners remain untouched.
-- The detector is `viitheone/4thwall-waf-v2.1b`, loaded from Hugging Face at a pinned revision on first start (~266 MB weights); the Apache-2.0 model code is loaded with `trust_remote_code=True`.
+- The `viitheone/4thwall-waf-v2.1b` weights and tokenizer/code assets are bundled in `models/4thwall`; the 266 MB `model.safetensors` uses Git LFS. `install.sh` installs Git LFS and pulls only that weight object from this GitHub repository before copying the project to `/opt/aegis`. Inference does not download model files from Hugging Face.
 - The model-provided per-label thresholds apply to the model's 13 multi-label outputs. Observe mode records aggregate counts only. Block mode returns 403 when a detection matches `block_categories`; scanner reconnaissance and protocol manipulation remain alert-only by default.
 - Inference/model-loading errors fail open. The model needs CPU memory and makes no protection claim for TLS or unparsed traffic. Review model and false-positive performance before production blocking.
