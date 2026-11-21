@@ -51,9 +51,9 @@ def load_config(path: str | Path = DEFAULT_CONFIG) -> dict[str, Any]:
     model = document.get("model", {})
     if not isinstance(model, dict):
         raise ValueError("config.model must be a mapping")
-    if document.get("mode", "observe") not in {"observe", "block"}:
+    if document.get("mode", "block") not in {"observe", "block"}:
         raise ValueError("mode must be observe or block")
-    defaults["mode"] = document.get("mode", "observe")
+    defaults["mode"] = document.get("mode", "block")
     defaults["block_categories"] = list(document.get("block_categories", []))
     defaults["model"] = model
     return defaults

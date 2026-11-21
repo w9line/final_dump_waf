@@ -1,4 +1,4 @@
-mode: observe
+mode: block
 block_categories:
   - 242 - Code Injection
   - 88 - OS Command Injection
